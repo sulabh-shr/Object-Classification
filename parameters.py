@@ -1,0 +1,3 @@
+VIDEO_SOURCE_INPUT = 0
+WIN_Y = 325
+WIN_X = WIN_Y * 4 // 3
