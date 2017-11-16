@@ -1,7 +1,9 @@
-EPOCHS = 5
+EPOCHS = 100
 BATCH_SIZE = 128
 TRAIN_PICKLE = 'traffic-signs-data/train.p'
 TEST_PICKLE = 'traffic-signs-data/test.p'
+VALID_PICKLE = 'traffic-signs-data/valid.p'
 MEAN = 0
 STD_DEV = 0.1
 LEARN_RATE = 0.001
+TOLERANCE = 0.005
