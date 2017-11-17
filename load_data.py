@@ -8,6 +8,7 @@ from parameters_nn import *
 
 
 def load_data(train_p=TRAIN_PICKLE, valid_p=VALID_PICKLE, test_p=TEST_PICKLE, verbose=True, visualize=False):
+    print("\nLOADING DATA")
     with open(train_p, 'rb') as f:
         train = pickle.load(f)
 

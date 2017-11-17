@@ -60,7 +60,7 @@ def train(x_train, y_train, x_valid, y_valid, epochs=EPOCHS, batch_size=BATCH_SI
             if validation_accuracy-prev_acc < tolerance:
                 print("Tolerance reached")
                 break
-            saver.save(sess, 'model/LeNet E' + str(i) + ' ACC {.3f}' + str(validation_accuracy))
+            saver.save(sess, 'model/LeNet E' + str(i) + ' ACC {.3f}' + str(float(validation_accuracy)))
 
              # TODO: Best model in past n
              # TODO: Save only if increased accuracy
