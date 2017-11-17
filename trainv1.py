@@ -3,6 +3,7 @@ from load_data import load_data
 from parameters_nn import *
 from sklearn.utils import shuffle
 from architecture import LeNet
+from time import time
 
 
 def evaluate(x_data, y_data, logits, one_hot_y, x, y):
@@ -19,7 +20,8 @@ def evaluate(x_data, y_data, logits, one_hot_y, x, y):
     return total_accuracy / num_examples
 
 
-def train(x_train, y_train, x_valid, y_valid, epochs=EPOCHS, batch_size=BATCH_SIZE, tolerance=TOLERANCE):
+def train(x_train, y_train, x_valid, y_valid, epochs=EPOCHS, batch_size=BATCH_SIZE, tolerance=TOLERANCE,
+          save_best=True):
     print("\nRUNNING TRAINING SETUP")
 
     # Input image where None is used to allow batch of any size
@@ -40,9 +42,10 @@ def train(x_train, y_train, x_valid, y_valid, epochs=EPOCHS, batch_size=BATCH_SI
     training_operation = optimizer.minimize(loss_operation)
 
     saver = tf.train.Saver()
-    prev_accuracy = 0
-    print("\nStarting the training session............")
-
+    prev_best_accuracy = 0
+    print("Starting the Training Session")
+    start_time = time()
+    epochs_trained = 1      # minimum 1 epoch. Removes division by zero error
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
         num_train = len(x_train)
@@ -54,16 +57,37 @@ def train(x_train, y_train, x_valid, y_valid, epochs=EPOCHS, batch_size=BATCH_SI
                 batch_x, batch_y = x_train[offset:end], y_train[offset:end]
                 sess.run(training_operation, feed_dict={x: batch_x, y: batch_y})
 
+            # Calculating accuracy on validation dataset
             validation_accuracy = evaluate(x_valid, y_valid, logits, one_hot_y, x, y)
             print("Epoch: {}".format(i + 1))
-            print("Validation Accuracy = {:.3f}".format(validation_accuracy))
-            if prev_accuracy - validation_accuracy < -tolerance:
-                print("Tolerance reached. Model accuracy didn't increase!!")
-                break
-            saver.save(sess, 'model/LeNet E' + str(i) + ' ACC {.3f}' + str(float(validation_accuracy)))
+            print("Validation Accuracy = {:.2f} %".format(validation_accuracy*100))
 
-             # TODO: Best model in past n
-             # TODO: Save only if increased accuracy
+            epochs_trained = i + 1
+            # Checking model improvement
+            if validation_accuracy - prev_best_accuracy < -tolerance:
+                print("\nModel Accuracy degraded below Tolerance level......")
+                print("\nBest Model Accuracy = {:.2f} %".format(prev_best_accuracy*100))
+                break
+
+            # Checking if current accuracy is better than best recorded previously
+            if validation_accuracy > prev_best_accuracy:
+                prev_best_accuracy = validation_accuracy
+
+                # Save if better accuracy when save_best True and continue to next iteration
+                if save_best:
+                    saver.save(sess, "models/LeNet E" + str(i) + " ACC {:.4f}".format(validation_accuracy))
+                    continue
+
+            # Save the model
+            saver.save(sess, "models/LeNet E" + str(i) + " ACC {:.4f}".format(validation_accuracy))
+
+    # Calculating total time
+    total_time = time() - start_time
+    print("Training Time: {:.2f} sec".format(total_time))
+    print("Training Time per Epoch: {:.2f} sec".format(total_time/epochs_trained))
+
+            # TODO: Best model in past n
+            # TODO: Plot graph
 
 
 if __name__ == '__main__':
