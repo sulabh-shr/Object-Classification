@@ -7,7 +7,7 @@ from sklearn.model_selection import train_test_split
 from parameters_nn import *
 
 
-def load_data(train_p=TRAIN_PICKLE, valid_p=VALID_PICKLE ,test_p=TEST_PICKLE, verbose=True, visualize=False):
+def load_data(train_p=TRAIN_PICKLE, valid_p=VALID_PICKLE, test_p=TEST_PICKLE, verbose=True, visualize=False):
     with open(train_p, 'rb') as f:
         train = pickle.load(f)
 

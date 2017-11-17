@@ -23,12 +23,12 @@ def train(x_train, y_train, x_valid, y_valid, epochs=EPOCHS, batch_size=BATCH_SI
     print("\nRUNNING TRAINING SETUP")
 
     # Input image where None is used to allow batch of any size
-    x = tf.placeholder(tf.float32, (None, 32, 32, 3))
+    x = tf.placeholder(tf.float32, (None, 32, 32, IN_DEPTH))
 
     # Integer labels
     y = tf.placeholder(tf.int32, (None))
     # One hot encoding the y labels
-    one_hot_y = tf.one_hot(y, 43)
+    one_hot_y = tf.one_hot(y, LABELS)
 
     logits = LeNet(x)
     cross_entropy = tf.nn.softmax_cross_entropy_with_logits(labels=one_hot_y, logits=logits)
@@ -62,8 +62,9 @@ def train(x_train, y_train, x_valid, y_valid, epochs=EPOCHS, batch_size=BATCH_SI
                 break
             saver.save(sess, 'model/LeNet E' + str(i) + ' ACC {.3f}' + str(validation_accuracy))
 
-             ## TODO: Best model in past n
-             ## TODO: Save only if increased accuracy
+             # TODO: Best model in past n
+             # TODO: Save only if increased accuracy
+
 
 if __name__ == '__main__':
     x_train, y_train, x_valid, y_valid, x_test, y_test = load_data(TRAIN_PICKLE, VALID_PICKLE, TEST_PICKLE)
