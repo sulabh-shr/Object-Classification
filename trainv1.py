@@ -40,7 +40,7 @@ def train(x_train, y_train, x_valid, y_valid, epochs=EPOCHS, batch_size=BATCH_SI
     training_operation = optimizer.minimize(loss_operation)
 
     saver = tf.train.Saver()
-    prev_acc = 0
+    prev_accuracy = 0
     print("\nStarting the training session............")
 
     with tf.Session() as sess:
@@ -57,8 +57,8 @@ def train(x_train, y_train, x_valid, y_valid, epochs=EPOCHS, batch_size=BATCH_SI
             validation_accuracy = evaluate(x_valid, y_valid, logits, one_hot_y, x, y)
             print("Epoch: {}".format(i + 1))
             print("Validation Accuracy = {:.3f}".format(validation_accuracy))
-            if validation_accuracy-prev_acc < tolerance:
-                print("Tolerance reached")
+            if prev_accuracy - validation_accuracy < -tolerance:
+                print("Tolerance reached. Model accuracy didn't increase!!")
                 break
             saver.save(sess, 'model/LeNet E' + str(i) + ' ACC {.3f}' + str(float(validation_accuracy)))
 
