@@ -4,7 +4,8 @@ from parameters_nn import *
 from sklearn.utils import shuffle
 from architecture import LeNet
 from time import time
-
+from matplotlib import pyplot as plt
+import os
 
 def evaluate(x_data, y_data, logits, one_hot_y, x, y):
     correct_prediction = tf.equal(tf.argmax(logits, 1), tf.argmax(one_hot_y, 1))
@@ -46,6 +47,7 @@ def train(x_train, y_train, x_valid, y_valid, epochs=EPOCHS, batch_size=BATCH_SI
     print("Starting the Training Session")
     start_time = time()
     epochs_trained = 1      # minimum 1 epoch. Removes division by zero error
+    loss = []
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
         num_train = len(x_train)
@@ -59,10 +61,14 @@ def train(x_train, y_train, x_valid, y_valid, epochs=EPOCHS, batch_size=BATCH_SI
 
             # Calculating accuracy on validation dataset
             validation_accuracy = evaluate(x_valid, y_valid, logits, one_hot_y, x, y)
+
+            # Adding loss to list for plotting
+            loss.append(1-validation_accuracy)
+            epochs_trained = i + 1
+
             print("Epoch: {}".format(i + 1))
             print("Validation Accuracy = {:.2f} %".format(validation_accuracy*100))
 
-            epochs_trained = i + 1
             # Checking model improvement
             if validation_accuracy - prev_best_accuracy < -tolerance:
                 print("\nModel Accuracy degraded below Tolerance level......")
@@ -86,8 +92,12 @@ def train(x_train, y_train, x_valid, y_valid, epochs=EPOCHS, batch_size=BATCH_SI
     print("Training Time: {:.2f} sec".format(total_time))
     print("Training Time per Epoch: {:.2f} sec".format(total_time/epochs_trained))
 
-            # TODO: Best model in past n
-            # TODO: Plot graph
+    os.system('spd-say -p +35 -r -30 "The training has finished. Thank you"')
+    plt.plot(list(range(1, len(loss)+1)), loss, 'ro', linestyle='dashed', dash_joinstyle='round')
+    plt.xlabel("Epochs")
+    plt.ylabel("Loss")
+    plt.axis([0, epochs_trained, 0, 1])
+    plt.show()
 
 
 if __name__ == '__main__':
