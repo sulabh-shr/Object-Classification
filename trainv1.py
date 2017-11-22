@@ -47,6 +47,7 @@ def train(x_train, y_train, x_valid, y_valid, epochs, batch_size, tolerance=0.01
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
         num_train = len(x_train)
+        print("Started training session")
 
         # Iterating over each Epoch
         for i in range(epochs):
@@ -68,7 +69,7 @@ def train(x_train, y_train, x_valid, y_valid, epochs, batch_size, tolerance=0.01
             print("Validation Accuracy = {:.2f} %".format(validation_accuracy*100))
 
             # Checking model improvement
-            if validation_accuracy - prev_best_accuracy < -tolerance and patience_count == patience:
+            if validation_accuracy - prev_best_accuracy < -tolerance and patience_count >= patience:
                 print("\nModel Accuracy degraded below Tolerance level......")
                 print("\nBest Model Accuracy = {:.2f} %".format(prev_best_accuracy*100))
                 break
@@ -77,6 +78,7 @@ def train(x_train, y_train, x_valid, y_valid, epochs, batch_size, tolerance=0.01
             if validation_accuracy > prev_best_accuracy:
                 prev_best_accuracy = validation_accuracy
                 patience_count = 0
+                print("Resetting patience count")
 
                 # Save if better accuracy when save_best True and continue to next iteration
                 if save_best:
@@ -84,6 +86,7 @@ def train(x_train, y_train, x_valid, y_valid, epochs, batch_size, tolerance=0.01
                     continue
 
             patience_count += 1
+            print("Increasing patience count")
             # Save the model
             saver.save(sess, "models/LeNet E" + str(i) + " ACC {:.4f}".format(validation_accuracy))
 
