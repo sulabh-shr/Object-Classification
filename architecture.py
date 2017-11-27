@@ -97,7 +97,7 @@ def LeNet2(x):
     fc2 = tf.matmul(fc1, fc2_W) + fc2_b
 
     #  Activation.
-    fc2 = tf.nn.relu(fc2)
+    fc2 = leaky_relu(fc2, 0.2)
 
     # Layer 5: Fully Connected. Input = 84. Output = Number of levels.
     fc3_W = tf.Variable(tf.truncated_normal(shape=(84, 43), mean=MEAN, stddev=STD_DEV))
