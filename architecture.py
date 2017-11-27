@@ -3,7 +3,7 @@ from tensorflow.contrib.layers import flatten
 from parameters_nn import *
 
 
-def leaky_relu(x, alpha):
+def leaky_relu(x, alpha=0.2):
     return tf.nn.relu(x) - alpha * tf.nn.relu(-x)
 
 
@@ -89,7 +89,7 @@ def LeNet2(x):
     fc1 = tf.matmul(fc0, fc1_W) + fc1_b
 
     # Activation.
-    fc1 = tf.nn.relu(fc1)
+    fc1 = leaky_relu(fc1)
 
     # Layer 4: Fully Connected. Input = 120. Output = 84.
     fc2_W = tf.Variable(tf.truncated_normal(shape=(120, 84), mean=MEAN, stddev=STD_DEV))
