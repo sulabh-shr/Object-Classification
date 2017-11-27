@@ -11,7 +11,7 @@ import os
 def train_status(start_time, epochs_trained, loss):
     # Calculating total time
     total_time = time() - start_time
-    print("Training Time: {:.2f} sec".format(total_time))
+    print("\nTraining Time: {:.2f} sec".format(total_time))
     print("Training Time per Epoch: {:.2f} sec".format(total_time / epochs_trained))
 
     os.system('spd-say -p +35 -r -30 "The training has finished. Thank you"')
@@ -112,7 +112,7 @@ def train(x_train, y_train, x_valid, y_valid, epochs, batch_size, tolerance=0.01
         train_status(start_time, epochs_trained, loss)
 
     except (KeyboardInterrupt, SystemExit) as e:
-        print("EXCEPTION DETECTED!!!!")
+        print("\n\n...................EXCEPTION DETECTED!!!!\n")
         train_status(start_time, epochs_trained, loss)
 
 
