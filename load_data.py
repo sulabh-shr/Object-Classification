@@ -7,6 +7,10 @@ from sklearn.model_selection import train_test_split
 from parameters_nn import *
 
 
+def normalize(x):
+    return (x-128)/255
+
+
 def load_data(train_p=TRAIN_PICKLE, valid_p=VALID_PICKLE, test_p=TEST_PICKLE, verbose=True, visualize=False):
     print("\nLOADING DATA")
     with open(train_p, 'rb') as f:
@@ -21,7 +25,6 @@ def load_data(train_p=TRAIN_PICKLE, valid_p=VALID_PICKLE, test_p=TEST_PICKLE, ve
     x_train, y_train = train['features'], train['labels']
     x_valid, y_valid = valid['features'], valid['labels']
     x_test, y_test = test['features'], test['labels']
-
 
     x_train, y_train = shuffle(x_train, y_train)
 
@@ -41,7 +44,7 @@ def load_data(train_p=TRAIN_PICKLE, valid_p=VALID_PICKLE, test_p=TEST_PICKLE, ve
         plt.imshow(x_train[i])
         plt.show()
 
-    return x_train, y_train, x_valid, y_valid, x_test, y_test
+    return normalize(x_train), y_train, normalize(x_valid), y_valid, normalize(x_test), y_test
 
 
 if __name__ == "__main__":
