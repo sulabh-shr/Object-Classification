@@ -2,7 +2,7 @@ import tensorflow as tf
 from load_data import load_data
 from parameters_nn import *
 from sklearn.utils import shuffle
-from architecture import LeNet
+from architecture import *
 from time import time
 from matplotlib import pyplot as plt
 import os
@@ -29,7 +29,7 @@ def train(x_train, y_train, x_valid, y_valid, epochs, batch_size, tolerance=0.01
     x = tf.placeholder(tf.float32, (None, 32, 32, IN_DEPTH))        # Input image. None is used to allow any batch size
     y = tf.placeholder(tf.int32, None)                              # Integer labels
     one_hot_y = tf.one_hot(y, LABELS)                               # One hot encoding the y labels
-    logits = LeNet(x)                                               # Output of LeNet
+    logits = LeNet2(x)                                               # Output of LeNet
 
     cross_entropy = tf.nn.softmax_cross_entropy_with_logits(labels=one_hot_y, logits=logits)
     loss_operation = tf.reduce_mean(cross_entropy)                  # Mean over cross entropy from all input images
@@ -51,6 +51,9 @@ def train(x_train, y_train, x_valid, y_valid, epochs, batch_size, tolerance=0.01
 
         # Iterating over each Epoch
         for i in range(epochs):
+            print("\nEpoch: {}".format(i + 1))
+
+            epoch_start = time()            # Timer to measure epoch time elapsed
             x_train, y_train = shuffle(x_train, y_train)
 
             # Iterating over the data in Batch size
@@ -59,13 +62,14 @@ def train(x_train, y_train, x_valid, y_valid, epochs, batch_size, tolerance=0.01
                 batch_x, batch_y = x_train[offset:end], y_train[offset:end]
                 sess.run(training_operation, feed_dict={x: batch_x, y: batch_y})
 
+            print("Epoch Training Time: {:.2f} sec".format(time()-epoch_start))
+
             # Calculating accuracy on validation dataset
             validation_accuracy = evaluate(x_valid, y_valid, logits, one_hot_y, x, y)
 
             loss.append(1-validation_accuracy)          # Adding loss to list for plotting
             epochs_trained = i + 1                      # Used for calculating time per epoch
 
-            print("Epoch: {}".format(i + 1))
             print("Validation Accuracy = {:.2f} %".format(validation_accuracy*100))
 
             # Checking model improvement
@@ -86,7 +90,7 @@ def train(x_train, y_train, x_valid, y_valid, epochs, batch_size, tolerance=0.01
                     continue
 
             patience_count += 1
-            print("Increasing patience count")
+            print("Increasing patience count to ", patience_count)
             # Save the model
             saver.save(sess, "models/LeNet E" + str(i) + " ACC {:.4f}".format(validation_accuracy))
 
@@ -106,3 +110,8 @@ def train(x_train, y_train, x_valid, y_valid, epochs, batch_size, tolerance=0.01
 if __name__ == '__main__':
     x_train, y_train, x_valid, y_valid, x_test, y_test = load_data(TRAIN_PICKLE, VALID_PICKLE, TEST_PICKLE)
     train(x_train, y_train, x_valid, y_valid, EPOCHS, BATCH_SIZE, TOLERANCE, PATIENCE)
+
+    # a = normalize(x_train[0:5])
+    # print(a)
+    # print(type(a[0]))
+
